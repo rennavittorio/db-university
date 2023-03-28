@@ -1,8 +1,12 @@
 -------------------------------------------------
 ------------------ GROUP BY ---------------------
 -------------------------------------------------
+to commit: [group] MLS 1 completed
+-------------------------------------------------
 1. Contare quanti iscritti ci sono stati ogni anno
-
+    SELECT COUNT(*) AS `n_stud`, YEAR(`enrolment_date`) AS `enrol_year`
+    FROM `students`
+    GROUP BY `enrol_year`;
 
 2. Contare gli insegnanti che hanno l'ufficio nello stesso edificio
 
