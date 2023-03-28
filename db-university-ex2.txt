@@ -82,7 +82,7 @@
     ORDER BY `teachers`.`surname`, `teachers`.`name` ASC;
 
 7. BONUS: Selezionare per ogni studente quanti tentativi d’esame ha sostenuto per superare ciascuno dei suoi esami
-    SELECT `students`.`name` AS `stud`, `courses`.`name` AS `exam`, MAX(`exam_student`.`vote`) AS `max_res`, COUNT(`exam_student`.`exam_id`) AS `tentatives`
+    SELECT `students`.`name` AS `stud_name`, `students`.`surname` AS `stud_surname`, `courses`.`name` AS `exam`, MIN(`exam_student`.`vote`) AS `min_res`, MAX(`exam_student`.`vote`) AS `max_res`, COUNT(`exam_student`.`exam_id`) AS `tentatives`
     FROM `students`
     LEFT JOIN `exam_student`
     ON `students`.`id` = `exam_student`.`student_id`
@@ -90,7 +90,7 @@
     ON `exam_student`.`exam_id` = `exams`.`id`
     LEFT JOIN `courses`
     ON `exams`.`course_id` = `courses`.`id`
-    WHERE `exam_student`.`vote` >= 18
-    GROUP BY `exam`, `stud`
-    ORDER BY `stud`;
+    GROUP BY `exam`, `stud_name`, `stud_surname`  
+    HAVING `max_res` >= 18
+    ORDER BY `stud_name`, `stud_surname` ASC;
 
