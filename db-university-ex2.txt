@@ -50,7 +50,13 @@ to commit: [join] MLS 1 completed
     WHERE `course_teacher`.`teacher_id` = 44;
 
 4. Selezionare tutti gli studenti con i dati relativi al corso di laurea a cui sono iscritti e il relativo dipartimento, in ordine alfabetico per cognome e nome
-
+    SELECT `departments`.`name` AS `dep_name`, `degrees`.*, `students`.`name` AS `stud_name`, `students`.`surname` AS `stud_surname`
+    FROM `departments`
+    RIGHT JOIN `degrees`
+    ON `departments`.`id` = `degrees`.`department_id`
+    RIGHT JOIN `students`
+    ON `degrees`.`id` = `students`.`degree_id`
+    ORDER BY `stud_surname`, `stud_name` ASC;
 
 5. Selezionare tutti i corsi di laurea con i relativi corsi e insegnanti
 
