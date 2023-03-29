@@ -1,0 +1,97 @@
+--1
+SELECT * 
+FROM `libri`
+ORDER BY `titolo`;
+
+--2
+SELECT DISTINCT `autori`.`nome`
+FROM `autori`
+JOIN `libri` ON `libri`.`autore_id` = `autori`.`id`;
+
+--3
+SELECT * 
+FROM `libri`
+WHERE `autore_id` = 1;
+
+--4
+SELECT * 
+FROM `prestiti`
+WHERE `utente_id` = 3;
+
+--5
+SELECT SUM(`libri`.`numero_copie`) AS `n_copie`, `generi`.`nome`
+FROM `libri`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+GROUP BY `generi`.`nome`
+ORDER BY `n_copie`;
+
+--6
+SELECT * 
+FROM `prestiti`
+WHERE `data_restituzione` <= '2021-12-31';
+
+--7
+SELECT `libri`.`titolo`, `generi`.`nome` 
+FROM `libri`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+WHERE `genere_id` = 2;
+
+--8
+SELECT COUNT(*) AS `n_prestiti`, `libro_id`, `libri`.`titolo`
+FROM `prestiti`
+JOIN `libri` ON `libri`.`id` = `prestiti`.`libro_id`
+GROUP BY `libro_id`
+ORDER BY `n_prestiti` DESC;
+
+--9
+SELECT `libri`.`titolo`, `autori`.`nome`, `generi`.`nome`
+FROM `libri`
+JOIN `autori` ON `autori`.`id` = `libri`.`autore_id`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+WHERE `libri`.`titolo` = 'The Great Gatsby';
+
+--10
+SELECT DISTINCT `utenti`.*, `libri`.`genere_id`, `generi`.`nome`
+FROM `utenti`
+JOIN `prestiti` ON `prestiti`.`utente_id` = `utenti`.`id`
+JOIN `libri` ON `libri`.`id` = `prestiti`.`libro_id`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+WHERE `libri`.`genere_id` = 1;
+
+--11
+SELECT `utenti`.`nome`, `libri`.`titolo`, `generi`.`nome`, `autori`.`nome`, YEAR(`prestiti`.`data_prestito`) AS `y_pres`
+FROM `utenti`
+JOIN `prestiti` ON `prestiti`.`utente_id` = `utenti`.`id`
+JOIN `libri` ON `libri`.`id` = `prestiti`.`libro_id`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+JOIN `autori` ON `autori`.`id` = `libri`.`autore_id`
+HAVING `y_pres` = 2022;
+
+--12 [da ottimizzare]
+SELECT `generi`.`nome`, COUNT(`prestiti`.`id`) `count`, YEAR(`prestiti`.`data_prestito`) AS `y`
+FROM `utenti`
+JOIN `prestiti` ON `prestiti`.`utente_id` = `utenti`.`id`
+JOIN `libri` ON `libri`.`id` = `prestiti`.`libro_id`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+JOIN `autori` ON `autori`.`id` = `libri`.`autore_id`
+GROUP BY `generi`.`nome`, `y`
+HAVING `y` = 2021;
+
+--13 [da ottimizzare]
+SELECT `libri`.`titolo`, `utenti`.`nome`, TIMESTAMPDIFF(DAY,`prestiti`.`data_prestito`, `prestiti`.`data_restituzione`) AS `durata_prestito`
+FROM `utenti`
+JOIN `prestiti` ON `prestiti`.`utente_id` = `utenti`.`id`
+JOIN `libri` ON `libri`.`id` = `prestiti`.`libro_id`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+JOIN `autori` ON `autori`.`id` = `libri`.`autore_id`
+HAVING `durata_prestito` > 20;
+
+--14 [da ottimizzare]
+SELECT `libri`.`titolo`, `generi`.`nome`, AVG(TIMESTAMPDIFF(DAY,`prestiti`.`data_prestito`, `prestiti`.`data_restituzione`)) AS `durata_prestito`
+FROM `utenti`
+JOIN `prestiti` ON `prestiti`.`utente_id` = `utenti`.`id`
+JOIN `libri` ON `libri`.`id` = `prestiti`.`libro_id`
+JOIN `generi` ON `generi`.`id` = `libri`.`genere_id`
+JOIN `autori` ON `autori`.`id` = `libri`.`autore_id`
+GROUP BY `libri`.`id`
+ORDER BY `durata_prestito` DESC;
